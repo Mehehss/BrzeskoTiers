@@ -1,0 +1,3849 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>BrzeskoTiers</title>
+
+<style>
+
+/* ===== MOBILE ===== */
+
+@media(max-width:700px){
+
+  .header{
+    flex-direction:column;
+    gap:20px;
+    padding:20px;
+  }
+
+  .leftHeader{
+    flex-direction:column;
+    width:100%;
+    gap:15px;
+  }
+
+  .navBtns{
+    width:100%;
+    overflow-x:auto;
+    padding-bottom:5px;
+  }
+
+  .playerRow{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:15px;
+  }
+
+  .tiers{
+    width:100%;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+  }
+
+  .popupContent{
+    width:95%;
+    padding:20px;
+  }
+
+  .heroTitle{
+    font-size:50px;
+    text-align:center;
+  }
+
+  .aboutBox,
+  .tierSystemText,
+  .joinText{
+    font-size:14px;
+  }
+
+  .whyGrid{
+    grid-template-columns:1fr;
+  }
+
+  .search{
+    padding:15px;
+  }
+
+  #search{
+    width:100%;
+  }
+
+  .ipWrapper{
+    width:100%;
+    justify-content:center;
+  }
+
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0a0a0f;
+  color:white;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,215,0,0.08), transparent 25%),
+    radial-gradient(circle at 80% 30%, rgba(0,150,255,0.08), transparent 25%),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.05), transparent 30%);
+
+  animation:bgMove 12s linear infinite;
+
+  z-index:-1;
+}
+
+@keyframes bgMove{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-20px)}
+  100%{transform:translateY(0)}
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f17; /* tło */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555; /* SZARY SUWAK */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#homePage, #leaderboardPage {
+  padding-top: 70px;
+}
+
+#modePanel{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  padding:10px;
+}
+
+#modePanel .playerRow{
+  min-width:260px;
+  flex-shrink:0;
+  scroll-snap-align:start;
+}
+
+#modeTabs{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:10px;
+  justify-content:center;
+  align-items:center;
+}
+
+#modeTabs .iconBtn{
+  flex:0 0 auto;
+}
+
+/* HEADER */
+.header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+
+  z-index:9999999;
+
+  display:flex;
+  align-items:center;
+  height: 64px;
+  padding: 8px 14px;
+
+  background:#0f0f17;
+
+  border-bottom:1px solid #1f1f2e;
+
+  gap:20px;
+  
+}
+
+#leaderboardPage{
+  position:relative;
+  z-index:1;
+}
+
+#modePanel{
+  position:relative;
+  z-index:1;
+}
+
+#leaderboard{
+  position:relative;
+  z-index:1;
+}
+
+.leftHeader{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
+.navBtns{
+  display:flex;
+  gap:10px;
+}
+
+.playerRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.skeleton{
+  background: linear-gradient(90deg, #1a1a25, #2a2a40, #1a1a25);
+  background-size: 200%;
+  animation: skeletonMove 1.2s infinite;
+  border-radius: 12px;
+}
+
+@keyframes skeletonMove{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+.skeletonRow{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:24px;
+  margin-bottom:12px;
+  border-radius:18px;
+  background:#12121a;
+  border:1px solid #1f1f2e;
+}
+
+.skeletonBox{
+  width:100%;
+  height:14px;
+}
+
+.skeletonCircle{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+}
+
+.top1 .name{
+  background: linear-gradient(90deg, gold, orange, gold);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+.top2 .name{
+  background: linear-gradient(90deg, #ddd, #aaa, #ddd);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+.top3 .name{
+  background: linear-gradient(90deg, #cd7f32, #ffb347, #cd7f32);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+.top4 .name{
+  background: linear-gradient(90deg, #5c4033, #8b5a2b, #5c4033);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+  text-shadow: 0 0 8px rgba(92, 64, 51, 0.6);
+}
+
+.top5 .name{
+  background: linear-gradient(90deg, #3b2a1a, #6b4f2a, #3b2a1a);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+  text-shadow: 0 0 8px rgba(59, 42, 26, 0.6);
+}
+
+@keyframes shine{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+.top1 .name{ text-shadow:0 0 10px gold; }
+.top2 .name{ text-shadow:0 0 8px silver; }
+.top3 .name{ text-shadow:0 0 8px #cd7f32; }
+
+
+/* WSPÓLNE */
+.top1 .rankNum,
+.top2 .rankNum,
+.top3 .rankNum,
+.top4 .rankNum,
+.top5 .rankNum{
+  position: relative;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+/* 🥇 TOP 1 – ZŁOTO PREMIUM */
+.top1 .rankNum{
+  background: linear-gradient(135deg, #ffd700, #ffb300, #fff6c7);
+  color: black;
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.7);
+}
+
+/* 🥈 TOP 2 – SREBRO */
+.top2 .rankNum{
+  background: linear-gradient(135deg, #d9d9d9, #f2f2f2);
+  color: black;
+  box-shadow: 0 0 14px rgba(200, 200, 200, 0.5);
+}
+
+/* 🥉 TOP 3 – BRĄZ */
+.top3 .rankNum{
+  background: linear-gradient(135deg, #cd7f32, #e0a15a);
+  color: black;
+  box-shadow: 0 0 12px rgba(205, 127, 50, 0.5);
+}
+
+/* TOP 4–5 – CIEMNY PRESTIGE */
+.top4 .rankNum,
+.top5 .rankNum{
+  background: linear-gradient(135deg, #444, #666);
+  color: white;
+  box-shadow: 0 0 10px rgba(80, 80, 80, 0.4);
+}
+
+/* ✨ SHIMMER (tylko TOP 1–5) */
+.top1 .rankNum::before,
+.top2 .rankNum::before,
+.top3 .rankNum::before,
+.top4 .rankNum::before,
+.top5 .rankNum::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.45),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: rankShine 3.5s infinite;
+}
+
+/* ANIMACJA */
+@keyframes rankShine{
+  0% { left: -50%; }
+  100% { left: 130%; }
+}
+
+.testBtn{
+  background:#12121a;
+  padding:6px 12px;
+  border-radius:10px;
+  border:1px solid #2a2a40;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.testBtn:hover{
+  background:#1a1a25;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:bold;
+}
+
+.logo img{
+width:34px;
+height:34px;
+border-radius:8px;
+}
+
+.ipWrapper{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.serverIcon{
+  width:40px;
+  height:40px;
+  border-radius:6px;
+}
+
+/* PRZYCISK */
+.ipBox{
+  background:#12121a;
+  padding:6px 12px;
+  border-radius:10px;
+  border:1px solid #2a2a40;
+  cursor:pointer;
+
+  display:flex;
+  flex-direction:column;
+
+  transition:0.2s;
+}
+
+.ipBox:hover{
+  background:#1a1a25;
+}
+
+.ipTitle{
+  font-size:13px;
+  font-weight:bold;
+}
+
+.ipSub{
+  font-size:11px;
+  opacity:0.7;
+  font-family:monospace;
+}
+
+/* SEARCH */
+.search{
+max-width:900px;
+margin:10px auto;
+margin-top: 20px;
+padding:0 10px;
+}
+
+.search input{
+width:100%;
+padding:14px;
+border-radius:12px;
+background:#12121a;
+border:1px solid #2a2a40;
+color:white;
+font-size:14px;
+}
+
+/* BOARD */
+#leaderboard{
+max-width:1000px;
+margin:auto;
+z-index:1;
+}
+
+/* PLAYER (POWIĘKSZONE 🔥) */
+.playerRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:24px;
+margin-bottom:12px;
+border-radius:18px;
+background:#12121a;
+border:1px solid #1f1f2e;
+cursor:pointer;
+transition:0.2s;
+z-index:1;
+}
+
+.playerRow:hover{
+transform:scale(1.04);
+}
+
+/* TOP GLOW */
+.rank1{box-shadow:0 0 24px gold;}
+.rank2{box-shadow:0 0 20px silver;}
+.rank3{box-shadow:0 0 18px #cd7f32;}
+.rank4{box-shadow:0 0 14px #5c4033;}
+.rank5{box-shadow:0 0 12px #3b2a1a;}
+
+/* RANK NUMBER */
+.rankNum{
+width:50px;
+height:50px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+background:#1f1f2e;
+font-size:18px;
+}
+
+/* TOP COLORS */
+.top1 .rankNum{background:gold;color:black;}
+.top2 .rankNum{background:silver;color:black;}
+.top3 .rankNum{background:#cd7f32;color:black;}
+.top4 .rankNum{background:#5c4033;color:white;}
+.top5 .rankNum{background:#3b2a1a;color:white;}
+
+/* LEFT */
+.left{
+display:flex;
+align-items:center;
+gap:12px;
+min-width:400px;
+}
+
+/* BUST (WIĘKSZY 🔥) */
+.bust{
+width:100px;
+height:100px;
+border-radius:50%;
+border:3px solid #2a2a40;
+}
+
+/* TEXT */
+.name{
+font-weight:bold;
+font-size:24px;
+}
+
+.rankText{
+font-size:18px;
+opacity:0.85;
+}
+
+/* XP */
+.xpWrap{
+width:100%;
+height:12px;
+background:#1f1f2e;
+border-radius:8px;
+overflow:hidden;
+margin-top:8px;
+}
+
+.xpFill{
+height:100%;
+background:linear-gradient(90deg,#22c55e,#a3ffb0);
+}
+
+/* TIERS */
+.tiers{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:10px;
+max-width:360px;
+}
+
+/* TIER BOX */
+.tierBox{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:4px;
+}
+
+/* ICON */
+.icon{
+width:32px;
+height:32px;
+border-radius:50%;
+border:2px solid #444;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+/* NAV BUTTONS NEW */
+
+.iconBtn{
+  background:none;
+  border:none;
+  box-shadow:none;
+}
+
+.iconBtn:hover{
+  background:none;
+  transform:scale(1.08);
+}
+
+.iconBtn img{
+  width:18px;
+  height:18px;
+}
+
+/* HERO */
+
+.hero{
+  min-height:70vh;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  text-align:center;
+}
+
+.heroTitle{
+  font-size:90px;
+  font-weight:900;
+
+  display:flex;
+  gap:25px;
+
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.whiteGlow{
+  color:white;
+  text-shadow:
+    0 0 10px white,
+    0 0 30px white;
+}
+
+.goldGlow{
+  color:gold;
+
+  text-shadow:
+    0 0 10px gold,
+    0 0 30px gold,
+    0 0 60px orange;
+}
+
+/* BUTTON */
+
+.viewBtn{
+  margin-top:40px;
+
+  padding:18px 42px;
+
+  border:none;
+  border-radius:18px;
+
+  font-size:22px;
+  font-weight:bold;
+
+  cursor:pointer;
+
+  background:linear-gradient(90deg,#ffd700,#ffae00);
+
+  color:black;
+
+  box-shadow:
+    0 0 20px gold,
+    0 0 50px rgba(255,215,0,0.5);
+
+  transition:0.25s;
+}
+
+.viewBtn:hover{
+  transform:scale(1.08);
+}
+
+/* ABOUT */
+
+.aboutSection{
+  max-width:1000px;
+  margin:auto;
+  padding:40px 20px 100px;
+}
+
+.aboutTitle{
+  font-size:32px;
+  font-weight:bold;
+  margin-bottom:20px;
+
+  text-align:center;
+}
+
+.aboutBox{
+  background:#12121a;
+
+  border:1px solid #2a2a40;
+
+  padding:30px;
+
+  border-radius:24px;
+
+  line-height:1.8;
+
+  font-size:17px;
+
+  box-shadow:
+    0 0 20px rgba(255,255,255,0.05);
+}
+
+.leaderboardBtn{
+border-color:#ffd700;
+box-shadow:0 0 12px rgba(255,215,0,0.2);
+}
+
+.navBtns{
+display:flex;
+gap:12px;
+}
+
+.navBtnStyled{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+
+  height:32px;       /* 🔥 mniejsze */
+  min-width:95px;    /* 🔥 mniejsze */
+  padding:0 10px;    /* 🔥 ciaśniej */
+
+  background:#12121a;
+  border:1px solid #3a3a4f;
+  border-radius:10px;
+
+  cursor:pointer;
+  transition:0.2s;
+
+  color:white;
+  text-decoration:none;
+
+  font-size:11px;
+  font-weight:bold;
+}
+
+.navBtnStyled:hover{
+background:#1a1a25;
+transform:translateY(-2px);
+border-color:#555;
+box-shadow:0 0 12px rgba(255,255,255,0.08);
+}
+
+.navBtnStyled img{
+width:14px;
+height:14px;
+}
+
+/* =========================
+   TIER SYSTEM PREMIUM
+========================= */
+
+.tierSystemSection{
+  margin-top:100px;
+  text-align:center;
+}
+
+.tierSystemTitle{
+  font-size:72px;
+  font-weight:900;
+
+  color:gold;
+
+  text-shadow:
+    0 0 10px gold,
+    0 0 30px orange,
+    0 0 60px rgba(255,180,0,0.6);
+
+  margin-bottom:14px;
+}
+
+.tierSystemText{
+  color:white;
+  opacity:0.75;
+  font-size:16px;
+
+  margin-bottom:50px;
+}
+
+/* COLUMN */
+
+.tierButtons{
+  display:flex;
+  flex-direction:column;
+
+  gap:22px;
+
+  max-width:700px;
+  margin:auto;
+}
+
+/* BUTTON */
+
+.tierBtn{
+  position:relative;
+
+  overflow:hidden;
+
+  background:#12121a;
+
+  border-radius:26px;
+
+  padding:34px;
+
+  display:flex;
+  align-items:center;
+  gap:28px;
+
+  transition:0.22s;
+
+  cursor:pointer;
+
+  border:1px solid #2a2a40;
+}
+
+.tierBtn:hover{
+  transform:scale(1.03);
+}
+
+/* GLOW */
+
+.tierBtn::before{
+  content:"";
+
+  position:absolute;
+  inset:0;
+
+  opacity:0.22;
+
+  z-index:0;
+
+  filter:blur(35px);
+
+  animation: tierGlow 4s linear infinite;
+}
+
+/* CONTENT */
+
+.tierBtn *{
+  position:relative;
+  z-index:2;
+}
+
+/* BIG NUMBER */
+
+.tierNumber{
+  font-size:110px;
+  font-weight:900;
+
+  line-height:1;
+
+  min-width:90px;
+}
+
+/* TEXT */
+
+.tierInfo{
+  text-align:left;
+}
+
+.tierName{
+  font-size:38px;
+  font-weight:900;
+}
+
+.tierDesc{
+  font-size:17px;
+  opacity:0.8;
+  margin-top:4px;
+}
+
+/* =========================
+   TIER 1
+========================= */
+
+.t1 .tierName,
+.t1 .tierNumber{
+  background:linear-gradient(90deg,#E8BA3A,#D5B355,#E8BA3A);
+
+  background-size:200%;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:tierShift1 4s linear infinite;
+}
+
+.t1::before{
+  background:linear-gradient(90deg,#E8BA3A,#D5B355,#E8BA3A);
+  background-size:200%;
+}
+
+/* =========================
+   TIER 2
+========================= */
+
+.t2 .tierName,
+.t2 .tierNumber{
+  background:linear-gradient(90deg,#C4D3E7,#A0A7B2,#C4D3E7);
+
+  background-size:200%;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:tierShift2 4s linear infinite;
+}
+
+.t2::before{
+  background:linear-gradient(90deg,#C4D3E7,#A0A7B2,#C4D3E7);
+  background-size:200%;
+}
+
+/* =========================
+   TIER 3
+========================= */
+
+.t3 .tierName,
+.t3 .tierNumber{
+  background:linear-gradient(90deg,#F89F5A,#C67B42,#F89F5A);
+
+  background-size:200%;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:tierShift3 4s linear infinite;
+}
+
+.t3::before{
+  background:linear-gradient(90deg,#F89F5A,#C67B42,#F89F5A);
+  background-size:200%;
+}
+
+/* =========================
+   TIER 4
+========================= */
+
+.t4 .tierName,
+.t4 .tierNumber{
+  background:linear-gradient(90deg,#006400,#6AFF00,#006400);
+
+  background-size:200%;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:tierShift4 4s linear infinite;
+}
+
+.t4::before{
+  background:linear-gradient(90deg,#006400,#6AFF00,#006400);
+  background-size:200%;
+}
+
+/* =========================
+   TIER 5
+========================= */
+
+.t5 .tierName,
+.t5 .tierNumber{
+  background:linear-gradient(90deg,#8F82A8,#655B79,#8F82A8);
+
+  background-size:200%;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:tierShift5 4s linear infinite;
+}
+
+.t5::before{
+  background:linear-gradient(90deg,#8F82A8,#655B79,#8F82A8);
+  background-size:200%;
+}
+
+/* ANIMATIONS */
+
+@keyframes tierGlow{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+@keyframes tierShift1{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+@keyframes tierShift2{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+@keyframes tierShift3{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+@keyframes tierShift4{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+@keyframes tierShift5{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+/* =========================
+   JOIN SECTION
+========================= */
+
+.joinSection{
+  max-width:1000px;
+
+  margin:120px auto 80px;
+
+  padding:60px 40px;
+
+  background:#12121a;
+
+  border:1px solid #2a2a40;
+  border-radius:32px;
+
+  text-align:center;
+
+  position:relative;
+  overflow:hidden;
+}
+
+/* GLOW */
+
+.joinSection::before{
+  content:"";
+
+  position:absolute;
+  inset:0;
+
+  background:
+    radial-gradient(circle at center,
+    rgba(88,101,242,0.18),
+    transparent 70%);
+
+  z-index:0;
+}
+
+/* CONTENT */
+
+.joinSection *{
+  position:relative;
+  z-index:2;
+}
+
+/* TITLE */
+
+.joinTitle{
+  font-size:58px;
+  font-weight:900;
+
+  color:white;
+
+  text-shadow:
+    0 0 10px white,
+    0 0 30px rgba(255,255,255,0.5);
+
+  margin-bottom:18px;
+}
+
+/* TEXT */
+
+.joinText{
+  max-width:760px;
+
+  margin:auto;
+
+  font-size:18px;
+  line-height:1.8;
+
+  opacity:0.82;
+
+  margin-bottom:40px;
+}
+
+/* DISCORD BUTTON */
+
+.discordBigBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+
+  padding:20px 42px;
+
+  border-radius:22px;
+
+  text-decoration:none;
+
+  font-size:24px;
+  font-weight:900;
+
+  color:white;
+
+  background:linear-gradient(
+    90deg,
+    #5865F2,
+    #7289ff,
+    #5865F2
+  );
+
+  background-size:200%;
+
+  box-shadow:
+    0 0 20px rgba(88,101,242,0.6),
+    0 0 60px rgba(88,101,242,0.25);
+
+  transition:0.22s;
+
+  animation: discordFlow 4s linear infinite;
+}
+
+.discordBigBtn:hover{
+  transform:scale(1.08);
+
+  box-shadow:
+    0 0 30px rgba(88,101,242,0.9),
+    0 0 80px rgba(88,101,242,0.45);
+}
+
+/* ICON */
+
+.discordBigBtn img{
+  width:34px;
+  height:34px;
+}
+
+/* ANIMATION */
+
+@keyframes discordFlow{
+  0%{
+    background-position:0%;
+  }
+
+  100%{
+    background-position:200%;
+  }
+}
+
+.icon{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.icon img{
+  width:75%;
+  height:75%;
+  object-fit:contain;
+}
+
+.shake{
+  animation: shake 0.3s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  50%{transform:translateX(6px)}
+  75%{transform:translateX(-6px)}
+  100%{transform:translateX(0)}
+}
+
+/* BADGE */
+.badge{
+padding:3px 10px;
+border-radius:12px;
+font-size:11px;
+color:#707070;
+font-weight:bold;
+}
+
+/* POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:1000000000;
+}
+
+#popup{
+  z-index:1000000000;
+}
+
+#infoPopup{
+  z-index:1100000000;
+}
+.popupContent{
+background:#101018;
+padding:18px;
+border-radius:18px;
+width:380px;
+text-align:center;
+border:1px solid #2a2a40;
+z-index:1000000000;
+animation: pop 0.15s ease-out;
+}
+
+@keyframes pop{
+  from{transform:scale(0.95);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+/* POPUP BUST */
+.popupBust{
+width:120px;
+height:120px;
+border-radius:50%;
+border:4px solid #2a2a40;
+}
+
+/* 🔥 POPUP TOP GLOW */
+
+.popupBust{
+  position:relative;
+  z-index:1;
+}
+
+/* TOP 1 */
+.popupTop1{
+  border-color:gold !important;
+
+  box-shadow:
+    0 0 10px gold,
+    0 0 22px rgba(255,215,0,0.45);
+
+  animation: top1Glow 2.5s infinite alternate;
+}
+
+/* TOP 2 */
+.popupTop2{
+  border-color:silver !important;
+
+  box-shadow:
+    0 0 10px silver,
+    0 0 22px rgba(192,192,192,0.45);
+
+  animation: top2Glow 2.5s infinite alternate;
+}
+
+/* TOP 3 */
+.popupTop3{
+  border-color:#cd7f32 !important;
+
+  box-shadow:
+    0 0 10px #cd7f32,
+    0 0 22px rgba(205,127,50,0.45);
+
+  animation: top3Glow 2.5s infinite alternate;
+}
+
+/* TOP 4 */
+.popupTop4{
+  border-color:#5c4033 !important;
+
+  box-shadow:
+    0 0 16px #5c4033,
+    0 0 34px rgba(92,64,51,0.7);
+
+  animation: top4Glow 2.5s infinite alternate;
+}
+
+/* TOP 5 */
+.popupTop5{
+  border-color:#3b2a1a !important;
+
+  box-shadow:
+    0 0 14px #3b2a1a,
+    0 0 30px rgba(59,42,26,0.7);
+
+  animation: top5Glow 2.5s infinite alternate;
+}
+
+/* ANIMACJE */
+
+@keyframes top1Glow{
+  from{
+    box-shadow:
+      0 0 8px gold,
+      0 0 18px rgba(255,215,0,0.35);
+  }
+
+  to{
+    box-shadow:
+      0 0 14px gold,
+      0 0 28px rgba(255,215,0,0.55);
+  }
+}
+
+@keyframes top2Glow{
+  from{
+    box-shadow:
+      0 0 8px silver,
+      0 0 18px rgba(192,192,192,0.35);
+  }
+
+  to{
+    box-shadow:
+      0 0 14px silver,
+      0 0 28px rgba(192,192,192,0.55);
+  }
+}
+
+@keyframes top3Glow{
+  from{
+    box-shadow:
+      0 0 8px #cd7f32,
+      0 0 18px rgba(205,127,50,0.35);
+  }
+
+  to{
+    box-shadow:
+      0 0 14px #cd7f32,
+      0 0 28px rgba(205,127,50,0.55);
+  }
+}
+
+@keyframes top4Glow{
+  from{
+    box-shadow:
+      0 0 10px #5c4033,
+      0 0 20px rgba(92,64,51,0.5);
+  }
+
+  to{
+    box-shadow:
+      0 0 18px #5c4033,
+      0 0 40px rgba(92,64,51,0.9);
+  }
+}
+
+@keyframes top5Glow{
+  from{
+    box-shadow:
+      0 0 8px #3b2a1a,
+      0 0 18px rgba(59,42,26,0.5);
+  }
+
+  to{
+    box-shadow:
+      0 0 16px #3b2a1a,
+      0 0 35px rgba(59,42,26,0.9);
+  }
+}
+
+/* POPUP TEXT */
+.popName{margin-top:10px;font-size:20px;font-weight:bold;}
+.popRank{opacity:0.8;margin-bottom:10px;}
+
+/* SPACE FIX */
+.popTiers{
+margin-top:20px;
+}
+
+/* CLOSE */
+.closeBtn{
+margin-top:14px;
+padding:10px 16px;
+border-radius:14px;
+background:#1a1a25;
+border:1px solid #2a2a40;
+color:white;
+cursor:pointer;
+}
+
+/* INFO MENU */
+#infoMenu .popupContent{
+  width:420px;
+}
+
+/* TABS */
+.tabs{
+  display:flex;
+  background:#0f0f17;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:15px;
+}
+
+.tab{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  cursor:pointer;
+  color:#aaa;
+  transition:0.2s;
+}
+
+.tab.active{
+  background:#1a1a25;
+  color:white;
+}
+
+/* LISTA */
+.infoList{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* ITEM */
+.infoItem{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px;
+  border-radius:12px;
+  background:#12121a;
+}
+
+.infoTextWrap{
+  display:flex;
+  flex-direction:column;
+}
+
+.points{
+  font-size:13px;
+  opacity:0.7;
+  font-family:monospace; /* 🔥 KLUCZ */
+}
+
+/* IKONY */
+.infoIcon{
+  width:28px;
+  height:28px;
+}
+
+/* TEKST */
+.infoTitle{
+  font-weight:bold;
+}
+
+.infoDesc{
+  font-size:13px;
+  opacity:0.7;
+}
+
+.whySection{
+  max-width:1200px;
+  margin:120px auto;
+  padding:0 20px;
+}
+
+.whyTitle{
+  text-align:center;
+  font-size:48px;
+  font-weight:900;
+  margin-bottom:60px;
+
+  color:white;
+  text-shadow:0 0 20px rgba(255,255,255,0.25);
+}
+
+.whyTitle span{
+  color:gold;
+
+  text-shadow:
+    0 0 10px gold,
+    0 0 30px orange;
+}
+
+.whyGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:25px;
+}
+
+.whyCard{
+  background:#12121a;
+  border:1px solid #2a2a40;
+  border-radius:26px;
+
+  padding:35px 25px;
+
+  text-align:center;
+
+  transition:0.25s;
+
+  box-shadow:
+    0 0 20px rgba(255,255,255,0.04);
+}
+
+.whyCard:hover{
+  transform:translateY(-8px) scale(1.03);
+
+  border-color:#555;
+
+  box-shadow:
+    0 0 25px rgba(255,215,0,0.12);
+}
+
+.whyIcon{
+  font-size:52px;
+  margin-bottom:18px;
+}
+
+.whyCardTitle{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+.whyDesc{
+  opacity:0.75;
+  line-height:1.7;
+}
+
+.footer{
+  margin-top:140px;
+
+  border-top:1px solid #222233;
+
+  padding:60px 20px 40px;
+
+  text-align:center;
+
+  background:#0b0b12;
+}
+
+.footerLogo{
+  font-size:42px;
+  font-weight:900;
+  color:white;
+
+  text-shadow:
+    0 0 12px rgba(255,255,255,0.2);
+}
+
+.footerLogo span{
+  color:gold;
+
+  text-shadow:
+    0 0 12px gold,
+    0 0 30px orange;
+}
+
+.footerText{
+  margin-top:12px;
+  opacity:0.7;
+}
+
+.footerLinks{
+  margin-top:35px;
+
+  display:flex;
+  justify-content:center;
+  gap:28px;
+
+  flex-wrap:wrap;
+}
+
+.footerLinks a{
+  color:#aaa;
+  text-decoration:none;
+  transition:0.2s;
+}
+
+.footerLinks a:hover{
+  color:white;
+  transform:translateY(-2px);
+}
+
+.footerBottom{
+  margin-top:40px;
+  opacity:0.45;
+  font-size:14px;
+}
+
+.popupTabs{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  margin-bottom:18px;
+}
+
+.popupTab{
+  flex:1;
+  padding:10px;
+  border-radius:12px;
+  background:#12121a;
+  border:1px solid #2a2a40;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.popupTab.active{
+  background:#1a1a25;
+  border-color:gold;
+  box-shadow:0 0 12px rgba(255,215,0,0.3);
+}
+
+#guidePage{
+  display:none;
+  padding:40px;
+  color:white;
+}
+
+.guideHero{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.guideTitle{
+  font-size:58px;
+  font-weight:900;
+  color:#FFD54A;
+  text-shadow:
+    0 0 20px rgba(255,213,74,0.7),
+    0 0 50px rgba(255,213,74,0.5);
+}
+
+.guideSubtitle{
+  margin-top:10px;
+  opacity:0.8;
+  font-size:18px;
+}
+
+.sectionTitle{
+  font-size:24px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+.jumpGrid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:40px;
+}
+
+.jumpBtn:hover{
+  transform:scale(1.05);
+  border-color:#4da3ff;
+}
+
+.quickJumpButtons{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.jumpBtn{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+
+  border-radius: 12px;
+  padding: 10px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  gap:6px;
+
+  cursor:pointer;
+  transition: 0.2s;
+}
+
+.jumpBtn:hover{
+  transform: scale(1.05);
+  background: rgba(255,255,255,0.12);
+}
+
+.jumpBtn img{
+  width:28px;
+  height:28px;
+}
+
+#guidePage{
+  padding-top: 90px;
+}
+
+.guideContainer{
+  padding-top: 20px;
+}
+
+.guideContainer{
+  display:flex;
+  flex-direction:column;
+  gap:25px;
+}
+
+.guideCard{
+  background:#171720;
+  border:1px solid #2a2a40;
+  border-radius:22px;
+  padding:25px;
+}
+
+.swordTheme{
+  border-color:#4da3ff;
+  box-shadow:0 0 30px rgba(77,163,255,0.15);
+}
+
+.guideCardHeader{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:25px;
+}
+
+.guideIconBox{
+  width:70px;
+  height:70px;
+
+  border-radius:18px;
+
+  background:#1e2d45;
+  border:2px solid #4da3ff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.guideIconBox img{
+  width:42px;
+}
+
+.guideModeTitle{
+  font-size:34px;
+  font-weight:900;
+  color:#4da3ff;
+}
+
+.guideModeSub{
+  opacity:0.7;
+}
+
+.guideSection{
+  margin-top:25px;
+}
+
+.guideSectionTitle{
+  font-size:22px;
+  font-weight:bold;
+  color:#4da3ff;
+  margin-bottom:10px;
+}
+
+.guideSection ul{
+  padding-left:20px;
+  line-height:1.9;
+}
+
+#guideModes{
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* odstęp między trybami */
+}
+
+.guideCard{
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 14px;
+}
+
+.guideCard:hover{
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.guideModeTitle{
+  font-weight: bold;
+  font-size: 22px;
+
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: glowMove 3s ease infinite;
+}
+
+@keyframes glowMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+
+  <div class="leftHeader">
+
+    <div class="logo">
+      <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1777647209/Ikona_BrzeskoTiers_bsqasr.png">
+      BrzeskoTiers
+    </div>
+
+    <div class="navBtns">
+
+      <div class="navBtnStyled" onclick="goHome()">
+        <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1778600683/Home_eoq9bc.png">
+        Home
+      </div>
+
+      <div class="navBtnStyled" onclick="openRankings()">
+        <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1778323248/rankings_gxohjw.png">
+        Leaderboard
+      </div>
+
+      <div class="navBtnStyled" onclick="openGuide()">
+     <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1778323240/file_code_aicsf1.png">
+     Guide
+     </div>
+ 
+      <a class="navBtnStyled" target="_blank" href="https://discord.gg/6PdQXjbgNg">
+        <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1778323233/discord_npnvx1.png">
+        Discord
+      </a>
+
+    </div>
+
+  </div>
+
+  <div class="ipWrapper">
+
+    <img class="serverIcon"
+      src="https://res.cloudinary.com/dr94jhjux/image/upload/v1777647340/BrzeskoFFA_ifbibw.png">
+
+    <div class="ipBox" onclick="copyIP()">
+      <div class="ipTitle">Kopiuj IP</div>
+      <div class="ipSub">BrzeskoFFA.aternos.me</div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- KONIEC HEADER -->
+
+<!-- GUIDE PAGE -->
+<div id="guidePage" style="display:none;">
+
+  <div class="guideContainer">
+
+    <div class="guideHero">
+
+      <div class="guideTitle">
+        Complete Guide
+      </div>
+
+      <div class="guideSubtitle">
+        Twój kompletny poradnik dotyczący testów, systemu kolejek oraz szczegółowych zasad każdego trybu.
+      </div>
+
+    </div>
+
+    <div class="quickJumpTitle">
+      Quick Jump
+    </div>
+
+    <div id="quickJumpButtons" class="quickJumpButtons"></div>
+
+    <div id="guideModes"></div>
+
+  </div>
+
+</div>
+
+<!-- HOME -->
+<div id="homePage">
+
+  <div class="hero">
+
+    <div class="heroTitle">
+      <span class="whiteGlow">Brzesko</span>
+      <span class="goldGlow">Tierlist</span>
+    </div>
+
+    <button class="viewBtn" onclick="openRankings()">
+      View Rankings
+    </button>
+
+  </div>
+
+  <div class="aboutSection">
+
+    <div class="aboutTitle">
+      Co to Brzesko Tierlist?
+    </div>
+
+    <div class="aboutBox">
+      W Minecraft PvP liczą się umiejętności. Znajomość swojego miejsca może naprawdę wiele zmienić. Brzesko Tierlist to społeczność, 
+	  która klasyfikuje graczy na podstawie ich umiejętności bojowych poprzez uczciwe i konkurencyjne mecze 1v1.
+
+      <br><br>
+
+      Niezależnie od tego, czy jesteś użytkownikiem cracked, czy graczem premium, uczciwie testujemy każdego, aby zapewnić sprawiedliwy ranking.
+	  Nasz system jest przejrzysty, oparty na społeczności i stale ewoluuje.
+    </div>
+	
+	<div class="tierSystemSection">
+
+  <div class="tierSystemTitle">
+    Tier System
+  </div>
+
+  <div class="tierSystemText">
+    5 tierów, każdy z podpoziomami High Tier oraz Low Tier. Focused on 1v1 skill.
+  </div>
+
+  <div class="tierButtons">
+
+  <div class="tierBtn t5">
+    <div class="tierNumber">5</div>
+
+    <div class="tierInfo">
+      <div class="tierName">Tier 5</div>
+      <div class="tierDesc">Beginner level</div>
+    </div>
+  </div>
+
+  <div class="tierBtn t4">
+    <div class="tierNumber">4</div>
+
+    <div class="tierInfo">
+      <div class="tierName">Tier 4</div>
+      <div class="tierDesc">Developing skills</div>
+    </div>
+  </div>
+
+  <div class="tierBtn t3">
+    <div class="tierNumber">3</div>
+
+    <div class="tierInfo">
+      <div class="tierName">Tier 3</div>
+      <div class="tierDesc">Intermediate</div>
+    </div>
+  </div>
+
+  <div class="tierBtn t2">
+    <div class="tierNumber">2</div>
+
+    <div class="tierInfo">
+      <div class="tierName">Tier 2</div>
+      <div class="tierDesc">Advanced</div>
+    </div>
+  </div>
+
+  <div class="tierBtn t1">
+    <div class="tierNumber">1</div>
+
+    <div class="tierInfo">
+      <div class="tierName">Tier 1</div>
+      <div class="tierDesc">Elite players</div>
+    </div>
+  </div>
+  
+  <div class="joinSection">
+
+  <div class="joinTitle">
+    Gotowy, żeby się wykazać?
+  </div>
+
+  <div class="joinText">
+    Dołącz do społeczności, sprawdź się i zdobądź należny Ci poziom
+    wśród najlepszych graczy PvP w Minecraft.
+  </div>
+
+  <a class="discordBigBtn"
+     href="https://discord.gg/6PdQXjbgNg"
+     target="_blank">
+
+    <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1778323233/discord_npnvx1.png">
+
+    Discord
+
+  </a>
+
+</div>
+
+   <div class="whySection">
+
+  <div class="whyTitle">
+    Czemu Wybrać <span>BrzeskoTiers</span>
+  </div>
+
+  <div class="whyGrid">
+
+    <div class="whyCard">
+      <div class="whyIcon">⚔️</div>
+      <div class="whyCardTitle">Competitive Ranking</div>
+      <div class="whyDesc">
+        Każdy gracz zdobywa miejsce na podstawie realnych umiejętności PvP.
+      </div>
+    </div>
+
+    <div class="whyCard">
+      <div class="whyIcon">🛡️</div>
+      <div class="whyCardTitle">Fair Tests</div>
+      <div class="whyDesc">
+        Testy są uczciwe i prowadzone według jasnych zasad.
+      </div>
+    </div>
+
+    <div class="whyCard">
+      <div class="whyIcon">🔥</div>
+      <div class="whyCardTitle">Active Community</div>
+      <div class="whyDesc">
+        Społeczność stale się rozwija i regularnie odbywają się nowe testy.
+      </div>
+    </div>
+
+    <div class="whyCard">
+      <div class="whyIcon">🏆</div>
+      <div class="whyCardTitle">Skill Based</div>
+      <div class="whyDesc">
+        Ranking opiera się wyłącznie na skillu gracza.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+   <footer class="footer">
+
+  <div class="footerLogo">
+    Brzesko<span>Tiers</span>
+  </div>
+
+  <div class="footerText">
+    Competitive Minecraft PvP Tierlist System
+  </div>
+
+  <div class="footerLinks">
+
+    <a href="#">Home</a>
+    <a href="#">Leaderboard</a>
+    <a href="#">Guide</a>
+
+    <a target="_blank"
+       href="https://discord.gg/6PdQXjbgNg">
+       Discord
+    </a>
+
+  </div>
+
+  <div class="footerBottom">
+    © 2026 BrzeskoTiers
+  </div>
+
+</footer>
+
+</div>
+
+  </div>
+
+</div>
+
+  </div>
+
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboardPage" style="display:none;">
+
+  <!-- SEARCH -->
+  <div class="search">
+
+    <div style="display:flex;gap:10px;align-items:center;">
+
+      <input id="search"
+             placeholder="Wpisz nazwę gracza i ENTER..."
+             onkeydown="handleSearch(event)">
+
+      <div class="iconBtn navBtnStyled" onclick="openInfoMenu()">
+        <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1777647172/informeren_hjshns.png">
+        Informacje
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- MODE ICONS -->
+  <div id="modeTabs"></div>
+
+  <!-- MODE PANEL -->
+  <div id="modePanel"></div>
+
+  <!-- GLOBAL LEADERBOARD -->
+  <div id="leaderboard"></div>
+
+</div>
+
+<!-- TESTS POPUP -->
+<div class="popup" id="testsPopup">
+  <div class="popupContent">
+
+    <div id="testsList"></div>
+    <div id="testDetails" style="display:none;"></div>
+
+    <button class="closeBtn" onclick="closeTests()">Zamknij</button>
+
+  </div>
+</div>
+
+<!-- INFO POPUP -->
+<div class="popup" id="infoPopup">
+  <div class="popupContent">
+
+    <div id="infoText"></div>
+
+    <button class="closeBtn" onclick="closeInfo()">Zamknij</button>
+
+  </div>
+</div>
+
+<!-- INFO MENU -->
+<div class="popup" id="infoMenu">
+  <div class="popupContent">
+
+    <div class="tabs">
+      <div class="tab active" id="tabRanks" onclick="showTab('ranks')">Titles</div>
+      <div class="tab" id="tabPoints" onclick="showTab('points')">Points</div>
+    </div>
+
+    <div id="infoMenuContent"></div>
+
+    <button class="closeBtn" onclick="closeInfoMenu()">Zamknij</button>
+
+  </div>
+</div>
+
+<!-- PLAYER POPUP -->
+<div class="popup" id="popup">
+
+  <div class="popupContent">
+
+    <img id="bust" class="popupBust">
+
+    <div id="pName" class="popName"></div>
+
+    <div id="pRank" class="popRank"></div>
+
+    <div class="xpWrap">
+      <div id="xpFill" class="xpFill"></div>
+    </div>
+
+    <div class="popupTabs">
+
+  <div class="popupTab active"
+       id="mainTab"
+       onclick="showPopupTiers('main')">
+       Main Tiers
+  </div>
+
+  <div class="popupTab"
+       id="subTab"
+       onclick="showPopupTiers('sub')">
+       Sub Tiers
+  </div>
+
+</div>
+
+<div id="popupTierContent" class="tiers popTiers"></div>
+
+    <div id="avgTier"></div>
+
+    <button class="closeBtn" onclick="closePopup()">Zamknij</button>
+
+  </div>
+
+</div>
+
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+
+function openInfoMenu(){
+  document.getElementById("infoMenu").style.display="flex";
+  showTab("ranks");
+}
+
+function closeInfoMenu(){
+  document.getElementById("infoMenu").style.display="none";
+}
+
+function setActive(tab){
+  document.getElementById("tabRanks").classList.remove("active");
+  document.getElementById("tabPoints").classList.remove("active");
+
+  if(tab==="ranks"){
+    document.getElementById("tabRanks").classList.add("active");
+  }else{
+    document.getElementById("tabPoints").classList.add("active");
+  }
+}
+
+function showTab(tab){
+
+  setActive(tab);
+
+  let html = "";
+
+  // =========================
+  // RANKS
+  // =========================
+
+  if(tab === "ranks"){
+
+    html = `
+    
+    <div class="infoList">
+
+      ${rankItem("Combat GrandMaster","750+ total points")}
+      ${rankItem("Combat Master","500+ total points")}
+      ${rankItem("Combat Ace","300+ total points")}
+      ${rankItem("Combat Specialist","200+ total points")}
+      ${rankItem("Combat Gadet","100+ total points")}
+      ${rankItem("Combat Novice","50+ total points")}
+      ${rankItem("Rookie","25+ total points")}
+      ${rankItem("Beginner","0+ total points")}
+
+    </div>
+    `;
+  }
+
+  // =========================
+  // POINTS
+  // =========================
+
+  if(tab === "points"){
+
+    html = `
+    
+    <div class="tabs">
+
+      <div class="tab active"
+      id="mainPointsTab"
+      onclick="showPointsType('main')">
+
+        Main Tiers
+
+      </div>
+
+      <div class="tab"
+      id="subPointsTab"
+      onclick="showPointsType('sub')">
+
+        Sub Tiers
+
+      </div>
+
+    </div>
+
+    <div id="pointsContent"></div>
+    `;
+  }
+
+  document.getElementById("infoMenuContent")
+    .innerHTML = html;
+
+  // DEFAULT LOAD
+  if(tab === "points"){
+    showPointsType("main");
+  }
+}
+
+function showPointsType(type){
+
+  document.getElementById("mainPointsTab")
+    .classList.remove("active");
+
+  document.getElementById("subPointsTab")
+    .classList.remove("active");
+
+  if(type === "main"){
+    document.getElementById("mainPointsTab")
+      .classList.add("active");
+  }else{
+    document.getElementById("subPointsTab")
+      .classList.add("active");
+  }
+
+  let data = [];
+
+  // MAIN TIERS
+  if(type === "main"){
+
+    data = [
+      ["Tier 1","60 / 45 pkt"],
+      ["Tier 2","30 / 20 pkt"],
+      ["Tier 3","10 / 6 pkt"],
+      ["Tier 4","4 / 3 pkt"],
+      ["Tier 5","2 / 1 pkt"]
+    ];
+  }
+
+  // SUB TIERS
+  else{
+
+    data = [
+      ["Tier 1","30 / 25 pkt"],
+      ["Tier 2","20 / 15 pkt"],
+      ["Tier 3","8 / 5 pkt"],
+      ["Tier 4","4 / 3 pkt"],
+      ["Tier 5","2 / 1 pkt"]
+    ];
+  }
+
+  let html = "";
+
+  data.forEach(d=>{
+
+    html += pointItem(d[0],d[1]);
+
+  });
+
+  document.getElementById("pointsContent")
+    .innerHTML = `
+    
+    <div class="infoList">
+      ${html}
+    </div>
+    `;
+}
+
+function rankItem(name,desc){
+  return `
+<div class="infoItem">
+  <img class="infoIcon" src="${getRankIcon(name)}">
+  <div class="infoTitle">${name}</div>
+  <div class="points">${desc}</div>
+</div>
+`;
+}
+
+function pointItem(name,desc){
+  return `
+  <div class="infoItem">
+    <div class="infoTitle">${name}</div>
+    <div class="infoDesc">${desc}</div>
+  </div>
+  `;
+}
+
+function openRankings(){
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("leaderboardPage").style.display = "block";
+}
+
+function goHome(){
+  document.getElementById("homePage").style.display = "block";
+  document.getElementById("leaderboardPage").style.display = "none";
+}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD7HhWLwIYCo6qN_y9lPmtezBrqrx4ipbo",
+  authDomain: "brzeskotiers.firebaseapp.com",
+  databaseURL: "https://brzeskotiers-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "brzeskotiers",
+  storageBucket: "brzeskotiers.firebasestorage.app",
+  messagingSenderId: "733455905812",
+  appId: "1:733455905812:web:672fb7b71c6d8505462301"
+};
+
+firebase.initializeApp(firebaseConfig);
+const dbRef = firebase.database().ref("players");
+
+const MAX_POINTS = 1080;
+
+/* MODES */
+const mainModes = [
+"Sword","Crystal","Mace","Axe","UHC",
+"SMP","NethPot","Pot","Cart","OGV",
+"DiamondSMP","LifeSteal"
+];
+
+const subModes = [
+"Nemos","Speed","BoxPvP","Rod",
+"Bow","Creeper","Trident","Bed",
+"DiamondCrystal","Igrzyska",
+"SpearMace","Manhunt"
+];
+
+const allModes = [...mainModes, ...subModes];
+
+/* 🔥 TU PODMIENIASZ IKONY TRYBÓW 🔥 */
+const modeIcons={
+Sword:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647863/sword_hxl85l.png",
+Crystal:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647866/vanilla_mvlla2.png",
+Mace:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647869/mace_g8h6n6.png",
+Axe:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647871/axe_dup1vs.png",
+UHC:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647874/uhc_qwqyrm.png",
+SMP:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647877/smp_rkghsv.png",
+NethPot:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647879/nethop_pidgvt.png",
+Pot:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647887/pot_vtwv0n.png",
+Cart:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647898/cart_vpyspm.png",
+Nemos:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647901/nemos_kycndg.png",
+Speed:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647905/speed_dvz3xj.png",
+OGV:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647907/ogv_fcdkkg.png",
+DiamondSMP:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647910/diasmp_duw4rf.png",
+BoxPvP:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647913/boxpvp_wtznz1.png",
+Bow:"https://res.cloudinary.com/dr94jhjux/image/upload/v1777647915/bow_iq7gqy.png",
+LifeSteal:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582328/LifeSteal_vtplbh.png",
+Creeper:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582316/Creeper_sdjv3u.png",
+DiamondCrystal:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582324/Diamond_Crystal_oenlrr.png",
+Manhunt:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582321/Manhunt_wa7d4f.png",
+Trident:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582312/Trident_u5jxdd.png",
+Bed:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582314/Bed_pzmama.png",
+Igrzyska:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582331/Igrzyska_qgafbp.png",
+Rod:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582319/Rod_hpubmm.png",
+SpearMace:"https://res.cloudinary.com/dr94jhjux/image/upload/v1778582309/Spear_Mace_wxhn4n.png",
+
+};
+
+const rankIcons = {
+  "Combat GrandMaster": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647408/combat_grandmaster_bod6lw.webp",
+  "Combat Master": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647447/combat_master_xe8shi.webp",
+  "Combat Ace": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647453/combat_ace_vay97h.webp",
+  "Combat Specialist": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647461/combat_specialist_wugfkb.png",
+  "Combat Gadet": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647480/combat_cadet_bro5ms.png",
+  "Combat Novice": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647468/combat_novice_i1yhbb.png",
+  "Rookie": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777647474/rookie_bvf4ha.png",
+  "Beginner": "https://res.cloudinary.com/dr94jhjux/image/upload/v1777646878/begginer_box9d7.png"
+};
+
+function getRankIcon(r){
+  return rankIcons[r] || "";
+}
+
+function getAverageTier(player){
+
+  let total = 0;
+  let count = 0;
+
+  mainModes.forEach(mode=>{
+
+    let tier = player[mode];
+
+    if(mainPts[tier]){
+      total += mainPts[tier];
+      count++;
+    }
+
+  });
+
+  subModes.forEach(mode=>{
+
+    let tier = player[mode];
+
+    if(subPts[tier]){
+      total += subPts[tier];
+      count++;
+    }
+
+  });
+
+  if(count === 0) return "BRAK";
+
+  let avg = total / count;
+
+  let all = {
+    ...mainPts,
+    ...subPts
+  };
+
+  let closest = "BRAK";
+  let diff = Infinity;
+
+  for(let tier in all){
+
+    let d = Math.abs(avg - all[tier]);
+
+    if(d < diff){
+      diff = d;
+      closest = tier;
+    }
+
+  }
+
+  return closest;
+}
+
+function renderSkeleton(){
+  let box = document.getElementById("leaderboard");
+  box.innerHTML = "";
+
+  for(let i=0;i<5;i++){
+    let row = document.createElement("div");
+    row.className = "skeletonRow";
+
+    row.innerHTML = `
+      <div class="skeleton" style="width:50px;height:50px;"></div>
+      <div class="skeleton skeletonCircle"></div>
+      <div style="flex:1">
+        <div class="skeleton skeletonBox" style="width:200px;margin-bottom:10px;"></div>
+        <div class="skeleton skeletonBox" style="width:120px;"></div>
+      </div>
+    `;
+
+    box.appendChild(row);
+  }
+
+  box.innerHTML += `
+    <div style="text-align:center;margin-top:20px;opacity:0.7;">
+      Loading tiers...
+    </div>
+  `;
+}
+
+function renderModes(){
+
+  let box = document.getElementById("modeTabs");
+  box.innerHTML = "";
+
+  // ===== WRAPPER =====
+  let wrapper = document.createElement("div");
+  wrapper.style.display = "flex";
+  wrapper.style.alignItems = "center";
+  wrapper.style.gap = "10px";
+  wrapper.style.marginBottom = "15px";
+
+  // ===== OVERALL BUTTON (FIXED) =====
+  let globalBtn = document.createElement("div");
+  globalBtn.className = "iconBtn";
+  globalBtn.style.width = "44px";
+  globalBtn.style.height = "44px";
+  globalBtn.style.display = "flex";
+  globalBtn.style.alignItems = "center";
+  globalBtn.style.justifyContent = "center";
+
+  globalBtn.innerHTML = `
+    <img src="https://res.cloudinary.com/dr94jhjux/image/upload/v1778323453/trophy_zh9faw.png">
+  `;
+
+  globalBtn.onclick = () => {
+    currentMode = null;
+    document.getElementById("modePanel").innerHTML = "";
+    document.getElementById("leaderboard").style.display = "block";
+    document.getElementById("modePanel").style.display = "none";
+    render();
+  };
+
+  wrapper.appendChild(globalBtn);
+  box.appendChild(wrapper);
+
+  // ===== MAIN MODES =====
+  let mainRow = document.createElement("div");
+  mainRow.style.display = "flex";
+  mainRow.style.flexWrap = "wrap";
+  mainRow.style.gap = "8px";
+  mainRow.style.marginBottom = "10px";
+
+  mainModes.forEach(mode => {
+    let btn = document.createElement("div");
+    btn.className = "iconBtn";
+    btn.innerHTML = `<img src="${modeIcons[mode]}">`;
+    btn.onclick = () => openMode(mode);
+    mainRow.appendChild(btn);
+  });
+
+  box.appendChild(mainRow);
+
+  // ===== SUB MODES =====
+  let subRow = document.createElement("div");
+  subRow.style.display = "flex";
+  subRow.style.flexWrap = "wrap";
+  subRow.style.gap = "8px";
+
+  subModes.forEach(mode => {
+    let btn = document.createElement("div");
+    btn.className = "iconBtn";
+    btn.innerHTML = `<img src="${modeIcons[mode]}">`;
+    btn.onclick = () => openMode(mode);
+    subRow.appendChild(btn);
+  });
+
+  box.appendChild(subRow);
+}
+
+function renderTiers() {
+  let box = document.getElementById("leaderboard");
+  box.innerHTML = "";
+
+  let groups = getTierGroups();
+
+  Object.keys(groups).forEach(tier => {
+
+    let section = document.createElement("div");
+    section.style.marginBottom = "25px";
+
+    section.innerHTML = `
+      <div style="font-size:20px;font-weight:bold;margin:10px;color:${colors[tier] || '#fff'}">
+        ${tier}
+      </div>
+    `;
+
+    groups[tier].forEach(n => {
+      let p = getPoints(db[n]);
+
+      section.innerHTML += `
+        <div class="playerRow" onclick="openPopup('${n}',${p})">
+          <img class="bust" src="${bust(n)}">
+          <div>
+            <div class="name">${n}</div>
+            <div class="rankText">${tier} • ${p} pkt</div>
+          </div>
+        </div>
+      `;
+    });
+
+    box.appendChild(section);
+  });
+}
+
+let currentMode = null;
+
+function openMode(mode){
+  currentMode = mode;
+
+  document.getElementById("leaderboard").style.display = "none";
+  document.getElementById("modePanel").style.display = "block";
+
+  let players = Object.keys(db)
+    .filter(n => db[n][mode])
+    .map(n => ({
+      name: n,
+      tier: db[n][mode],
+      points: getPoints(db[n])
+    }))
+    .sort((a,b) => b.points - a.points);
+
+  let groups = {
+    HT1: [], LT1: [],
+    HT2: [], LT2: [],
+    HT3: [], LT3: [],
+    HT4: [], LT4: [],
+    HT5: [], LT5: []
+  };
+
+  players.forEach(p => {
+    if(groups[p.tier]) groups[p.tier].push(p);
+  });
+
+  let box = document.getElementById("modePanel");
+  box.innerHTML = "";
+
+  // ===== HEADER =====
+  let header = document.createElement("div");
+  header.style.display = "grid";
+  header.style.gridTemplateColumns = "repeat(5, 1fr)";
+  header.style.gap = "10px";
+  header.style.marginBottom = "10px";
+
+  const tiers = [
+    ["Tier 1","HT1","LT1"],
+    ["Tier 2","HT2","LT2"],
+    ["Tier 3","HT3","LT3"],
+    ["Tier 4","HT4","LT4"],
+    ["Tier 5","HT5","LT5"]
+  ];
+
+  tiers.forEach(t => {
+
+    let div = document.createElement("div");
+
+    div.innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
+        padding:8px;
+        border-radius:12px 12px 0 0;
+        font-weight:bold;
+        background:${colors[t[1]]};
+        color:white;
+      ">
+        ${t[0]}
+      </div>
+    `;
+
+    header.appendChild(div);
+  });
+
+  box.appendChild(header);
+
+  // ===== GRID =====
+  let grid = document.createElement("div");
+  grid.style.display = "grid";
+  grid.style.gridTemplateColumns = "repeat(5, 1fr)";
+  grid.style.gap = "10px";
+
+  const order = [
+    ["HT1","LT1"],
+    ["HT2","LT2"],
+    ["HT3","LT3"],
+    ["HT4","LT4"],
+    ["HT5","LT5"]
+  ];
+
+  order.forEach(col => {
+
+    let colBox = document.createElement("div");
+    colBox.style.display = "flex";
+    colBox.style.flexDirection = "column";
+    colBox.style.gap = "6px";
+
+    col.forEach(tier => {
+
+      groups[tier].forEach(p => {
+
+        let row = document.createElement("div");
+
+        let isHT = tier.startsWith("HT");
+        let bg = isHT ? "#3a3a3a" : "#4a4a4a";
+
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+        row.style.gap = "10px";
+        row.style.padding = "6px 10px";
+        row.style.borderRadius = "10px";
+        row.style.cursor = "pointer";
+        row.style.background = bg;
+        row.style.color = "white";
+
+        row.innerHTML = `
+          <img src="${bust(p.name)}"
+          style="width:34px;height:34px;border-radius:6px;">
+
+          <div style="font-weight:bold;">
+            ${p.name}
+          </div>
+        `;
+
+        row.onclick = () => openPopup(p.name, p.points);
+
+        colBox.appendChild(row);
+      });
+    });
+
+    grid.appendChild(colBox);
+  });
+
+  box.appendChild(grid);
+}
+
+function openRankings(){
+
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("guidePage").style.display = "none";
+  document.getElementById("leaderboardPage").style.display = "block";
+
+}
+
+const guideData = {
+
+  // =========================
+  // MAIN MODES
+  // =========================
+
+  Sword:{
+    color:"#4da3ff",
+    eval:[
+      "Fights will be FT10",
+      "Minimum score for LT3: 7-10 against LT3 Tester",
+      "Minimum score for HT3 Eval: 10-6 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 7-10 against HT3",
+      "T2+ Fights will be FT15 and based on True Score"
+    ],
+    kit:[
+      "Protection III Armor",
+      "Diamond Sword",
+      "1 Golden Apple"
+    ]
+  },
+
+  Crystal:{
+    color:"#b84dff",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+      "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+	  "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT15 and based on True Score"
+    ],
+    kit:[
+      "14 totems Eval/8 Totems High",
+      "64 Anchors",
+      "No Enchanted Golden Apples",
+	  "No Weakness Arrows"
+    ]
+  },
+
+  Mace:{
+    color:"#ff944d",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+      "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "Breach IV Mace, Density V Mace",
+      "Unbreaking III Shield",
+      "No Cobwebs"
+    ]
+  },
+
+  Axe:{
+    color:"#ff5555",
+    eval:[
+      "Fights will be FT10",
+      "Minimum score for LT3: 7-10 against LT3 Tester",
+      "Minimum score for HT3 Eval: 10-6 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 10-6 against HT3 Tester",
+      "T2+ Fights will be FT15 and based on True Score"
+    ],
+    kit:[
+      "Diamond Axe,Sword and Armour",
+      "6 Arrows",
+      "5 Steak"
+    ]
+  },
+
+  UHC:{
+    color:"#55ff7f",
+    eval:[
+      "Fights will be FT4",
+      "Minimum score for LT3: 3-4 against LT3 Tester",
+      "Minimum score for HT3 Eval: 4-2 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 4-1 against HT3 Tester",
+      "T2+ Fights will be FT6 and based on True Score"
+    ],
+    kit:[
+      "10 Golden Apples",
+      "2 Lava Buckets",
+      "2 Water Buckets"
+    ]
+  },
+
+  SMP:{
+    color:"#00d084",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+      "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT4 and based on True Score"
+    ],
+    kit:[
+      "3 Stacks XP",
+      "1 Totem Allowed",
+    ]
+  },
+
+  NethPot:{
+    color:"#ff2f6d",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+      "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT4 and based on True Score"
+    ],
+    kit:[
+      "2 Totems",
+      "2 Stacks XP"
+    ]
+  },
+
+  Pot:{
+    color:"#ff66cc",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+      "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "Instant Health 2 potions",
+      "5 Steak"
+    ]
+  },
+
+  Cart:{
+    color:"#ffd24d",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+      "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT3 and based on True Score"
+    ],
+    kit:[
+      "2 Totems",
+      "Strength I",
+      "Elytra LT2+"
+    ]
+  },
+
+  OGV:{
+    color:"#8c7bff",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+      "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT4 and based on True Score"
+    ],
+    kit:[
+      "Strength II/Speed II",
+      "Punch 2 Bow",
+      "Normal Arrows Only"
+    ]
+  },
+
+  DiamondSMP:{
+    color:"#00e5ff",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+      "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT3 and based on True Score"
+    ],
+    kit:[
+      "2 Totems",
+      "Strength II/Speed I",
+      "2 Stacks XP"
+    ]
+  },
+
+  LifeSteal:{
+    color:"#ff0033",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+      "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT4 and based on True Score"
+    ],
+    kit:[
+      "2 Totems",
+      "Turtle Mater Potions"
+    ]
+  },
+
+  // =========================
+  // SUB MODES
+  // =========================
+
+  Nemos:{
+    color:"#00fff2",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+      "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT3 and based on True Score"
+    ],
+    kit:[
+      "1 Totem",
+      "2 Chorus/4 Ender Pearls",
+      "Diamond Backup Set"
+    ]
+  },
+
+  Speed:{
+    color:"#ffffff",
+    eval:[
+      "Fights will be FT5",
+      "Minimum score for LT3: 4-5 against LT3 Tester",
+      "Minimum score for HT3 Eval: 5-3 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 5-3 against HT3 Tester",
+      "T2+ Fights will be FT10 and based on True Score"
+    ],
+    kit:[
+      "Speed II Enabled",
+      "Protecion III Armour"
+    ]
+  },
+
+  BoxPvP:{
+    color:"#ff8800",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+      "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "20 Totems",
+      "32 Fireworks"
+    ]
+  },
+
+  Rod:{
+    color:"#55cfff",
+    eval:[
+      "Fights will be FT4",
+      "Minimum score for LT3: 3-4 against LT3 Tester",
+      "Minimum score for HT3 Eval: 4-2 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 4-2 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "Unbreaking 3 Fishing Rod",
+      "No Shield"
+    ]
+  },
+
+  Bow:{
+    color:"#55ff55",
+    eval:[
+      "Fights will be FT6",
+      "Minimum score for LT3: 4-6 against LT3 Tester",
+      "Minimum score for HT3 Eval: 6-3 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 6-4 against HT3 Tester",
+      "T2+ Fights will be FT10 and based on True Score"
+    ],
+    kit:[
+      "Bow Only",
+      "No Sword"
+    ]
+  },
+
+  Creeper:{
+    color:"#33cc33",
+    eval:[
+      "Fights will be FT4",
+      "Minimum score for LT3: 3-4 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 4-2 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 4-2 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "4 Stack Creeper Eggs",
+      "24 TNT"
+    ]
+  },
+
+  Trident:{
+    color:"#00aaff",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT3 and based on True Score"
+    ],
+    kit:[
+      "Riptide 3 Trident,Loyality 3 Trident",
+      "2 Water Buckets"
+    ]
+  },
+
+  Bed:{
+    color:"#ff4444",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "2 Beds Colours",
+      "3 Shulkers With Beds Only"
+    ]
+  },
+
+  DiamondCrystal:{
+    color:"#66ccff",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "Diamond Armor",
+      "No Anchors"
+    ]
+  },
+
+  Igrzyska:{
+    color:"#ffaa00",
+    eval:[
+      "Fights will be FT2",
+      "Minimum score for LT3: 1-2 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 2-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 2-1 against HT3 Tester",
+      "T2+ Fights will be FT3 and based on True Score"
+    ],
+    kit:[
+      "16 Wind Charges",
+      "1 Water Bucket"
+    ]
+  },
+
+  SpearMace:{
+    color:"#ff7744",
+    eval:[
+      "Fights will be FT3",
+      "Minimum score for LT3: 2-3 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 3-1 against HT3 Tester",
+      "T2+ Fights will be FT4 and based on True Score"
+    ],
+    kit:[
+      "No Breach Mace",
+      "Lunge III Spear",
+	  "No Elytra"
+    ]
+  },
+
+  Manhunt:{
+    color:"#ff2222",
+    eval:[
+      "Fights will be FT4",
+      "Minimum score for LT3: 3-4 against LT3 Tester",
+	  "Minimum score for HT3 Eval: 3-1 against LT3 Tester"
+    ],
+    high:[
+      "Minimum score for HT3: 4-2 against HT3 Tester",
+      "T2+ Fights will be FT5 and based on True Score"
+    ],
+    kit:[
+      "1 Water Bucket/1 PufferFish Bucket",
+      "3 Golden Apples/4 Ender Pearls"
+    ]
+  }
+
+};
+
+function renderGuide(){
+
+  let jumpBox = document.getElementById("quickJumpButtons");
+  let box = document.getElementById("guideModes");
+
+  jumpBox.innerHTML = "";
+  box.innerHTML = "";
+
+  const modes = [...mainModes, ...subModes];
+
+  modes.forEach(mode => {
+
+    let data = guideData[mode];
+
+    // 🔒 zabezpieczenie (żeby nie crashowało)
+    if(!data) return;
+
+    // =========================
+    // QUICK JUMP BUTTON
+    // =========================
+    jumpBox.innerHTML += `
+      <div class="jumpBtn"
+        onclick="document.getElementById('guide-${mode}').scrollIntoView({behavior:'smooth'})">
+
+        <img src="${modeIcons[mode]}">
+        <div>${mode}</div>
+
+      </div>
+    `;
+
+    // =========================
+    // GUIDE CARD
+    // =========================
+    box.innerHTML += `
+      <div class="guideCard" id="guide-${mode}">
+
+        <div class="guideHeader">
+
+          <div class="guideIconBox"
+            style="background:${data.color}22;border:2px solid ${data.color};">
+
+            <img src="${modeIcons[mode]}">
+
+          </div>
+
+          <div class="guideModeTitle"
+       style="
+       background: linear-gradient(90deg, ${data.color}, #ffffff, ${data.color});
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+          ">
+        ${mode}
+     </div>
+
+        <!-- EVALUATION -->
+        <div class="guideSection">
+          <div class="guideSectionTitle" style="color:${data.color}">
+            Evaluation Tests
+          </div>
+
+          <div class="guideList">
+            ${(data.eval || []).map(r => `<div>● ${r}</div>`).join("")}
+          </div>
+        </div>
+
+        <!-- HIGH -->
+        <div class="guideSection">
+          <div class="guideSectionTitle" style="color:${data.color}">
+            High Tests
+          </div>
+
+          <div class="guideList">
+            ${(data.high || []).map(r => `<div>● ${r}</div>`).join("")}
+          </div>
+        </div>
+
+        <!-- KIT -->
+        <div class="guideSection">
+          <div class="guideSectionTitle" style="color:${data.color}">
+            Kit
+          </div>
+
+          <div class="guideList">
+            ${(data.kit || []).map(r => `<div>● ${r}</div>`).join("")}
+          </div>
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+function goHome(){
+
+  document.getElementById("homePage").style.display = "block";
+  document.getElementById("leaderboardPage").style.display = "none";
+  document.getElementById("guidePage").style.display = "none";
+}
+
+function openRankings(){
+
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("leaderboardPage").style.display = "block";
+  document.getElementById("guidePage").style.display = "none";
+}
+
+function openGuide(){
+
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("leaderboardPage").style.display = "none";
+  document.getElementById("guidePage").style.display = "block";
+
+  renderGuide();
+}
+
+function closeGuide(){
+
+  document.getElementById("guidePage").style.display = "none";
+
+  document.getElementById("homePage").style.display = "block";
+}
+  
+
+
+function openTests(){
+  document.getElementById("testsPopup").style.display="flex";
+
+  let html="";
+
+  for(let mode in testsData){
+    html += `
+      <div class="infoItem" onclick="openTest('${mode}')">
+  <img class="infoIcon" src="${modeIcons[mode]}">
+  <div class="infoTextWrap">
+    <div class="infoTitle">${mode}</div>
+  </div>
+</div>
+    `;
+  }
+
+  document.getElementById("testsList").innerHTML = html;
+}
+
+function openTest(mode){
+  let data = testsData[mode];
+
+  document.getElementById("testsList").style.display="none";
+  document.getElementById("testDetails").style.display="block";
+
+  document.getElementById("testDetails").innerHTML = `
+  <div style="text-align:center">
+
+    <img src="${data.img}" style="width:120px;border-radius:12px;margin-bottom:10px;">
+
+    <div style="font-weight:bold;font-size:18px">${mode}</div>
+
+    <div style="margin-top:10px;opacity:0.8;white-space:pre-line;">
+    ${data.rules}
+   </div>
+
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:15px;">
+
+      <button class="closeBtn" onclick="backToTests()">
+        Wróć
+      </button>
+
+    </div>
+
+  </div>
+  `;
+}
+
+function backToTests(){
+  document.getElementById("testDetails").style.display="none";
+  document.getElementById("testsList").style.display="block";
+}
+
+function closeTests(){
+  document.getElementById("testsPopup").style.display="none";
+}
+
+/* COLORS */
+const colors={
+HT1:"#E8BA3A", LT1:"#D5B355",
+HT2:"#C4D3E7", LT2:"#A0A7B2",
+HT3:"#F89F5A", LT3:"#C67B42",
+HT4:"#006400", LT4:"#6AFF00",
+HT5:"#8F82A8", LT5:"#655B79",
+BRAK:"#777777"
+};
+
+/* POINTS */
+const mainPts = {
+HT1:60,LT1:45,
+HT2:30,LT2:20,
+HT3:10,LT3:6,
+HT4:4,LT4:3,
+HT5:2,LT5:1
+};
+
+const subPts = {
+HT1:30,LT1:25,
+HT2:20,LT2:15,
+HT3:8,LT3:5,
+HT4:4,LT4:3,
+HT5:2,LT5:1
+};
+
+const ip="BrzeskoFFA.aternos.me";
+
+let db = {};
+
+dbRef.on("value", (snap) => {
+  db = snap.val() || {};
+  render();
+});
+
+function gen(){
+
+let o={};
+
+allModes.forEach(m=>{
+
+let keys=Object.keys(mainPts);
+
+o[m]=keys[Math.floor(Math.random()*keys.length)];
+
+});
+
+return o;
+}
+
+/* BUST */
+function bust(n){
+return "https://render.crafty.gg/3d/bust/"+n;
+}
+
+/* ICON */
+function icon(m){
+return modeIcons[m];
+}
+
+/* POINTS */
+function getPoints(player){
+
+  let total = 0;
+
+  // MAIN TIERS
+  mainModes.forEach(mode=>{
+    let tier = player[mode];
+
+    if(mainPts[tier]){
+      total += mainPts[tier];
+    }
+  });
+
+  // SUB TIERS
+  subModes.forEach(mode=>{
+    let tier = player[mode];
+
+    if(subPts[tier]){
+      total += subPts[tier];
+    }
+  });
+
+  return total;
+}
+
+/* RANK */
+function rank(p){
+if(p>=750)return "Combat GrandMaster";
+if(p>=500)return "Combat Master";
+if(p>=300)return "Combat Ace";
+if(p>=200)return "Combat Specialist";
+if(p>=100)return "Combat Gadet";
+if(p>=50)return "Combat Novice";
+if(p>=25)return "Rookie";
+return "Beginner";
+}
+
+/* 🔥 NOWA WYSZUKIWARKA (ENTER → POPUP) */
+function handleSearch(e){
+
+  if(e.key !== "Enter") return;
+
+  let input = document.getElementById("search");
+
+  let value = input.value
+    .trim()
+    .toLowerCase();
+
+  // pusty input
+  if(!value) return;
+
+  // znajdź gracza bez case sensitivity
+  let foundPlayer = Object.keys(db).find(name =>
+    name.toLowerCase() === value
+  );
+
+  // ZNALEZIONO
+  if(foundPlayer){
+
+    openPopup(
+      foundPlayer,
+      getPoints(db[foundPlayer])
+    );
+
+    input.value = "";
+
+    return;
+  }
+
+  // NIE ZNALEZIONO
+  input.value = "";
+
+  let oldPlaceholder = input.placeholder;
+
+  input.placeholder = "Nie znaleziono gracza";
+  input.style.border = "1px solid red";
+  input.style.color = "red";
+
+  // SHAKE
+  input.classList.add("shake");
+
+  setTimeout(() => {
+    input.classList.remove("shake");
+  }, 300);
+
+  // RESET
+  setTimeout(() => {
+
+    input.placeholder = oldPlaceholder;
+
+    input.style.border =
+      "1px solid #2a2a40";
+
+    input.style.color = "white";
+
+  }, 2500);
+
+}
+
+/* COPY */
+function copyIP(){
+  navigator.clipboard.writeText("BrzeskoFFA.aternos.me");
+
+  let box = document.querySelector(".ipBox");
+
+  box.innerHTML = `
+    <div class="ipTitle">Skopiowano!</div>
+    <div class="ipSub">BrzeskoFFA.aternos.me</div>
+  `;
+
+  box.style.color = "#22c55e";
+
+  setTimeout(()=>{
+    box.innerHTML = `
+      <div class="ipTitle">Kopiuj IP</div>
+      <div class="ipSub">BrzeskoFFA.aternos.me</div>
+    `;
+    box.style.color = "white";
+  }, 2000);
+}
+
+/* POPUP */
+let currentPopupPlayer = null;
+
+function openPopup(n,p){
+
+  currentPopupPlayer = n;
+
+  let data = db[n];
+
+  document.getElementById("popup").style.display = "flex";
+
+  // BUST
+  let bustEl = document.getElementById("bust");
+
+  bustEl.src = bust(n);
+
+  // RESET GLOW
+  bustEl.classList.remove(
+    "popupTop1",
+    "popupTop2",
+    "popupTop3",
+    "popupTop4",
+    "popupTop5"
+  );
+
+  // TOP POSITION
+  let players = Object.keys(db)
+    .sort((a,b)=>getPoints(db[b]) - getPoints(db[a]));
+
+  let pos = players.indexOf(n) + 1;
+
+  if(pos <= 5){
+    bustEl.classList.add("popupTop"+pos);
+  }
+
+  // NAME
+  document.getElementById("pName").innerText = n;
+
+  // RANK
+  document.getElementById("pRank").innerHTML = `
+  <span onclick="openInfo(rankInfo('${rank(p)}'))"
+  style="
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  ">
+
+    <img src="${getRankIcon(rank(p))}"
+    style="width:22px;height:22px;">
+
+    ${rank(p)}
+
+  </span>
+
+  ${p} pkt
+  `;
+
+  // XP BAR
+  document.getElementById("xpFill").style.width =
+  Math.min((p/1080)*100,100) + "%";
+
+  // LOAD MAIN TIERS DEFAULT
+  showPopupTiers("main");
+
+  // AVERAGE TIER
+  let avg = getAverageTier(data);
+
+  document.getElementById("avgTier").innerHTML = `
+  
+  <div style="
+    margin-top:18px;
+    text-align:center;
+  ">
+
+    <div style="opacity:0.7">
+      Average Tier
+    </div>
+
+    <div style="
+      font-size:18px;
+      font-weight:bold;
+      color:${colors[avg]}
+    ">
+      ${avg}
+    </div>
+
+  </div>
+  `;
+}
+
+function showPopupTiers(type){
+
+  document.getElementById("mainTab")
+    .classList.remove("active");
+
+  document.getElementById("subTab")
+    .classList.remove("active");
+
+  if(type === "main"){
+    document.getElementById("mainTab")
+      .classList.add("active");
+  }else{
+    document.getElementById("subTab")
+      .classList.add("active");
+  }
+
+  let player = db[currentPopupPlayer];
+
+  let list =
+    type === "main"
+    ? mainModes
+    : subModes;
+
+  let html = "";
+
+  list.forEach(mode=>{
+
+    let tier = player[mode];
+
+    if(!tier) return;
+
+    let c = colors[tier];
+
+    html += `
+    
+    <div class="tierBox">
+
+      <div class="icon"
+      style="border-color:${c}">
+
+        <img src="${icon(mode)}">
+
+      </div>
+
+      <div class="badge"
+      style="background:${c}">
+
+        ${tier}
+
+      </div>
+
+    </div>
+    `;
+  });
+
+  document.getElementById("popupTierContent")
+    .innerHTML = html;
+}
+
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
+
+function openInfo(text){
+  document.getElementById("infoPopup").style.display="flex";
+  document.getElementById("infoText").innerHTML = text;
+}
+
+function closeInfo(){
+  document.getElementById("infoPopup").style.display="none";
+}
+
+function rankInfo(r){
+  const map={
+    "Combat GrandMaster":"750+",
+    "Combat Master":"500-749",
+    "Combat Ace":"300-499",
+    "Combat Specialist":"200-299",
+    "Combat Gadet":"100-199",
+    "Combat Novice":"50-99",
+    "Rookie":"25-49",
+    "Beginner":"0-24"
+  };
+
+  return `
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+  <img src="${getRankIcon(r)}" style="width:50px;height:50px;">
+  <div style="font-weight:bold;">${r}</div>
+  <div style="opacity:0.8;">${map[r]} pkt</div>
+</div>
+`;
+}
+
+function tierInfo(t){
+  const map={
+    HT1:"60 pkt",
+    LT1:"45 pkt",
+    HT2:"30 pkt",
+    LT2:"20 pkt",
+    HT3:"10 pkt",
+    LT3:"6 pkt",
+    HT4:"4 pkt",
+    LT4:"3 pkt",
+    HT5:"2 pkt",
+    LT5:"1 pkt",
+    BRAK:"0 pkt"
+  };
+
+  return `
+<div style="text-align:center">
+  <div style="font-weight:bold;font-size:18px">${t}</div>
+  <div style="opacity:0.8;margin-top:5px">${map[t]}</div>
+</div>
+`;
+}
+
+/* RENDER */
+function render(){
+let box=document.getElementById("leaderboard");
+box.innerHTML="";
+
+let players=Object.keys(db)
+.sort((a,b)=>getPoints(db[b])-getPoints(db[a]));
+
+players.forEach((n,i)=>{
+
+let p=getPoints(db[n]);
+
+let row=document.createElement("div");
+row.className="playerRow";
+
+if(i<5){
+  row.classList.add("rank"+(i+1));
+  row.classList.add("top"+(i+1));
+}
+
+row.onclick=()=>openPopup(n,p);
+
+let tiers="";
+for(let m of mainModes){
+let t=db[n][m];
+let c=colors[t];
+
+tiers+=`
+<div class="tierBox">
+<div class="icon" style="border-color:${c}">
+<img src="${icon(m)}">
+</div>
+<div class="badge" style="background:${c}">${t}</div>
+</div>`;
+}
+
+row.innerHTML=`
+<div class="left">
+<div class="rankNum">${i+1}.</div>
+<img class="bust" src="${bust(n)}">
+<div>
+<div class="name">${n}</div>
+<div class="rankText" style="display:flex;align-items:center;gap:6px;">
+  <img src="${getRankIcon(rank(p))}" style="width:18px;height:18px;">
+  ${rank(p)} • ${p}
+</div>
+<div class="xpWrap"><div class="xpFill" style="width:${Math.min((p/1080)*100,100)}%"></div></div>
+</div>
+</div>
+
+<div class="tiers">${tiers}</div>
+`;
+
+box.appendChild(row);
+});
+
+/* 🏁 KONIEC LISTY */
+let end=document.createElement("div");
+end.style.textAlign="center";
+end.style.opacity="0.5";
+end.style.margin="30px";
+end.innerText="Koniec listy 👇";
+box.appendChild(end);
+}
+
+renderSkeleton();
+
+setTimeout(() => {
+  renderModes();
+}, 0);
+
+</script>
+
+</body>
+
+</html>
